@@ -204,7 +204,23 @@ void *tucalloc(size_t num, size_t size) {
  * @return A new pointer containing the contents of ptr, but with the new_size
  */
 void *turealloc(void *ptr, size_t new_size) {
-    return NULL;
+    if (!ptr) return tumalloc(new_size);
+    if (new_size == 0) {
+        tufree(ptr);
+        return NULL;
+    }
+
+    free_block *block = (free_block *)ptr - 1;
+    if (block->size >= new_size) {
+        return ptr; // Already large enough
+    }
+
+    void *new_ptr = tumalloc(new_size);
+    if (new_ptr) {
+        memcpy(new_ptr, ptr, block->size);
+        tufree(ptr);
+    }
+    return new_ptr;
 }
 
 /**
