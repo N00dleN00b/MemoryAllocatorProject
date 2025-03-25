@@ -241,19 +241,24 @@ void *turealloc(void *ptr, size_t new_size) {
  * @param ptr Pointer to the allocated piece of memory
  */
 void tufree(void *ptr) {
-    // Retrieve the header (block metadata) from the pointer
-    free_block *header = (free_block *)ptr - 1;
+    // Cast the pointer to the header
+    header *header = (header *)ptr - 1;
 
-    // Check if the magic number is correct (indicating valid allocation)
+    // Check if the block is valid (magic number is set correctly)
     if (header->magic == 0x01234567) {
+        // Cast the header to a free block
         free_block *free_block = (free_block *)header;
+
+        // Set the free block size and link it back to the free list (HEAD)
         free_block->size = header->size;
         free_block->next = HEAD;
-        HEAD = free_block;  // Add the block to the free list
+        HEAD = free_block;
 
-        coalesce(free_block);  // Attempt to coalesce neighboring blocks
+        // Perform coalescing
+        coalesce(free_block);
     } else {
+        // Handle memory corruption case
         printf("MEMORY CORRUPTION DETECTED\n");
-        abort(); // Abort if memory corruption is detected
+        abort(); // Abort execution
     }
 }
