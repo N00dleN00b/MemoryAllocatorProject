@@ -188,7 +188,12 @@ void *tumalloc(size_t size) {
  * @return A pointer to the requested block of initialized memory
  */
 void *tucalloc(size_t num, size_t size) {
-    return NULL;
+    size_t total_size = num * size;
+    void *ptr = tumalloc(total_size);
+    if (ptr) {
+        memset(ptr, 0, total_size);
+    }
+    return ptr;
 }
 
 /**
