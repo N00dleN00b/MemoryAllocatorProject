@@ -158,25 +158,40 @@ void *do_alloc(size_t size) {
  */
 void *tumalloc(size_t size) {
     if (size == 0) return NULL;
-    
+
     free_block *curr = HEAD;
     free_block *prev = NULL;
-    
-    // Find a free block large enough
+
+    // Find a free block large enough for the requested size
     while (curr != NULL) {
         if (curr->size >= size) {
-            remove_free_block(curr);
-            return (void*)(curr + 1); // Return pointer after header
+            // If the block is larger than needed, split it
+            if (curr->size > size + sizeof(free_block)) {
+                free_block *new_block = (free_block *)((char *)curr + size + sizeof(free_block));
+                new_block->size = curr->size - size - sizeof(free_block);
+                new_block->next = curr->next;
+                curr->size = size;
+                curr->next = new_block;
+            }
+
+            // Remove the block from the free list
+            if (prev) {
+                prev->next = curr->next;
+            } else {
+                HEAD = curr->next;
+            }
+
+            return (void *)(curr + 1); 
         }
         prev = curr;
         curr = curr->next;
     }
-    
+
     // No suitable block found, allocate more memory
     free_block *new_block = do_alloc(size);
     if (!new_block) return NULL;
-    
-    return (void*)(new_block + 1);
+
+    return (void *)(new_block + 1);
 }
     
 
@@ -207,7 +222,7 @@ void *tucalloc(size_t num, size_t size) {
 void *turealloc(void *ptr, size_t new_size) {
     if (!ptr) return tumalloc(new_size);  // Allocate new memory if ptr is NULL
     if (new_size == 0) {
-        tufree(ptr);  // Free memory if new_size is 0
+        tufree(ptr);  
         return NULL;
     }
 
@@ -243,11 +258,17 @@ void *turealloc(void *ptr, size_t new_size) {
  */
 void tufree(void *ptr) {
     if (!ptr) return;
-    // block header snag
-    free_block *block = (free_block *)ptr - 1; 
+
+    // Get the block header before the pointer
+    free_block *block = (free_block *)ptr - 1;
+    
+    // Check if block is already freed
+    if (block->next == NULL) return; 
+
+    // Coalesce the block with adjacent free blocks
     block->next = HEAD;
     HEAD = block;
 
-    // coalesce neighboring free blocks
+    // Attempt to coalesce neighboring blocks
     coalesce(block);
 }
