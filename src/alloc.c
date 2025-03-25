@@ -157,28 +157,28 @@ void *do_alloc(size_t size) {
  * @return A pointer to the requested block of memory
  */
 void *tumalloc(size_t size) {
-    // If HEAD is NULL (initialization or no free blocks)
+    // If HEAD is NULL, allocate a new block
     if (HEAD == NULL) {
-        void *ptr = do_alloc(size); // Perform allocation
+        ptr = do_alloc(size);
         return ptr;
     }
 
-    // Iterate through the free list
-    free_block *block = HEAD;
-    while (block != NULL) {
-        // If a block is big enough
+    // Iterate through the free list to find a block big enough
+    for (free_block *block = HEAD; block != NULL; block = block->next) {
         if (size <= block->size) {
-            free_block *header = split(block, size + sizeof(free_block)); // Split block if necessary
-            remove_free_block(header);  // Remove block from free list
-            header->size = size;       // Set size of the allocated block
-            header->magic = 0x01234567; // Set magic value to indicate allocated block
-            return (void *)((char *)header + 1); // Return pointer to the allocated memory
+            // Split the block if necessary, ensure room for the header
+            header *header = split(block, size + sizeof(header));
+            // Remove the block from the free list
+            remove_free_block(header);
+            // Set the magic number
+            header->magic = 0x01234567;
+            // Return the pointer to the allocated memory, after the header
+            return (void *)(header + 1);
         }
-        block = block->next;
     }
 
-    // If no block is large enough, allocate new memory
-    void *ptr = do_alloc(size); 
+    // If no block is big enough, allocate a new block
+    ptr = do_alloc(size);
     return ptr;
 }
     
@@ -244,21 +244,20 @@ void tufree(void *ptr) {
     // Cast the pointer to the header
     header *header = (header *)ptr - 1;
 
-    // Check if the block is valid (magic number is set correctly)
+    // Check if the block is valid by the magic number
     if (header->magic == 0x01234567) {
-        // Cast the header to a free block
+        // Cast the header to a free block for the free list
         free_block *free_block = (free_block *)header;
-
-        // Set the free block size and link it back to the free list (HEAD)
+        // Set the size and link back to the HEAD
         free_block->size = header->size;
         free_block->next = HEAD;
         HEAD = free_block;
 
-        // Perform coalescing
+        // Perform coalescing of the free block
         coalesce(free_block);
     } else {
-        // Handle memory corruption case
+        // Memory corruption detected
         printf("MEMORY CORRUPTION DETECTED\n");
-        abort(); // Abort execution
+        abort();
     }
 }
