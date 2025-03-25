@@ -136,8 +136,18 @@ void *coalesce(free_block *block) {
  * @param size The amount of memory to allocate
  * @return A pointer to the allocated memory
  */
+
 void *do_alloc(size_t size) {
-    return NULL;
+    void *block = sbrk(size + sizeof(free_block));
+    if (block == (void*) -1) { // sbrk failed
+        return NULL;
+    }
+
+    free_block *new_block = (free_block *) block;
+    new_block->size = size;
+    new_block->next = NULL;
+    return new_block;
+
 }
 
 /**
