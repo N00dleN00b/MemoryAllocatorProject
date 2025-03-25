@@ -203,24 +203,35 @@ void *tucalloc(size_t num, size_t size) {
  * @param new_size The new requested size to allocate
  * @return A new pointer containing the contents of ptr, but with the new_size
  */
+
 void *turealloc(void *ptr, size_t new_size) {
-    if (!ptr) return tumalloc(new_size);  
+    if (!ptr) return tumalloc(new_size);  // Allocate new memory if ptr is NULL
     if (new_size == 0) {
-        tufree(ptr);  
+        tufree(ptr);  // Free memory if new_size is 0
         return NULL;
     }
 
-    // correct block size assurance
+    // Ensure ptr is pointing to a valid block
+    if (ptr <= (void *)0x1000) {  
+        printf("Invalid pointer.\n");
+        return NULL;
+    }
+
+    
     free_block *block = (free_block *)ptr - 1; 
+    if (!block) {
+        printf("Invalid block.\n");
+        return NULL;
+    }
+
     if (block->size >= new_size) {
         return ptr;  
     }
 
     void *new_ptr = tumalloc(new_size);
     if (new_ptr) {
-        // Copy exactly new_size bytes
-        memcpy(new_ptr, ptr, new_size);
-        tufree(ptr);  // Free prev block
+        memcpy(new_ptr, ptr, new_size);  
+        tufree(ptr);  
     }
     return new_ptr;
 }
