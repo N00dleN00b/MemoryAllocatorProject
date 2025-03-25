@@ -157,41 +157,29 @@ void *do_alloc(size_t size) {
  * @return A pointer to the requested block of memory
  */
 void *tumalloc(size_t size) {
-    if (size == 0) return NULL;
-
-    free_block *curr = HEAD;
-    free_block *prev = NULL;
-
-    // Find a free block large enough for the requested size
-    while (curr != NULL) {
-        if (curr->size >= size) {
-            // If the block is larger than needed, split it
-            if (curr->size > size + sizeof(free_block)) {
-                free_block *new_block = (free_block *)((char *)curr + size + sizeof(free_block));
-                new_block->size = curr->size - size - sizeof(free_block);
-                new_block->next = curr->next;
-                curr->size = size;
-                curr->next = new_block;
-            }
-
-            // Remove the block from the free list
-            if (prev) {
-                prev->next = curr->next;
-            } else {
-                HEAD = curr->next;
-            }
-
-            return (void *)(curr + 1); 
-        }
-        prev = curr;
-        curr = curr->next;
+    // If HEAD is NULL (initialization or no free blocks)
+    if (HEAD == NULL) {
+        void *ptr = do_alloc(size); // Perform allocation
+        return ptr;
     }
 
-    // No suitable block found, allocate more memory
-    free_block *new_block = do_alloc(size);
-    if (!new_block) return NULL;
+    // Iterate through the free list
+    free_block *block = HEAD;
+    while (block != NULL) {
+        // If a block is big enough
+        if (size <= block->size) {
+            free_block *header = split(block, size + sizeof(free_block)); // Split block if necessary
+            remove_free_block(header);  // Remove block from free list
+            header->size = size;       // Set size of the allocated block
+            header->magic = 0x01234567; // Set magic value to indicate allocated block
+            return (void *)((char *)header + 1); // Return pointer to the allocated memory
+        }
+        block = block->next;
+    }
 
-    return (void *)(new_block + 1);
+    // If no block is large enough, allocate new memory
+    void *ptr = do_alloc(size); 
+    return ptr;
 }
     
 
@@ -253,18 +241,19 @@ void *turealloc(void *ptr, size_t new_size) {
  * @param ptr Pointer to the allocated piece of memory
  */
 void tufree(void *ptr) {
-    if (!ptr) return;
+    // Retrieve the header (block metadata) from the pointer
+    free_block *header = (free_block *)ptr - 1;
 
-    // Get the block header before the pointer
-    free_block *block = (free_block *)ptr - 1;
-    
-    // Check if block is already freed
-    if (block->next == NULL) return; 
+    // Check if the magic number is correct (indicating valid allocation)
+    if (header->magic == 0x01234567) {
+        free_block *free_block = (free_block *)header;
+        free_block->size = header->size;
+        free_block->next = HEAD;
+        HEAD = free_block;  // Add the block to the free list
 
-    // Coalesce the block with adjacent free blocks
-    block->next = HEAD;
-    HEAD = block;
-
-    // Attempt to coalesce neighboring blocks
-    coalesce(block);
+        coalesce(free_block);  // Attempt to coalesce neighboring blocks
+    } else {
+        printf("MEMORY CORRUPTION DETECTED\n");
+        abort(); // Abort if memory corruption is detected
+    }
 }
