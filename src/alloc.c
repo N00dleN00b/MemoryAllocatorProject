@@ -226,27 +226,23 @@ void *turealloc(void *ptr, size_t new_size) {
         return NULL;
     }
 
-    // Ensure ptr is pointing to a valid block
-    if (ptr <= (void *)0x1000) {  
-        printf("Invalid pointer.\n");
-        return NULL;
-    }
-
-    
-    free_block *block = (free_block *)ptr - 1; 
+    free_block *block = (free_block *)ptr - 1; // Get the block header
     if (!block) {
         printf("Invalid block.\n");
         return NULL;
     }
 
+    // Check if the new size is smaller or equal to the current size
     if (block->size >= new_size) {
-        return ptr;  
+        return ptr;  // No need to reallocate
     }
 
     void *new_ptr = tumalloc(new_size);
     if (new_ptr) {
-        memcpy(new_ptr, ptr, new_size);  
-        tufree(ptr);  
+        // Check that the old block size is not smaller than the new size before copying
+        size_t copy_size = block->size < new_size ? block->size : new_size;
+        memcpy(new_ptr, ptr, copy_size);  // Safely copy the memory
+        tufree(ptr);  // Free the old block
     }
     return new_ptr;
 }
