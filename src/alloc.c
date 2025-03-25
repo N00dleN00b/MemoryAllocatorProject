@@ -157,30 +157,28 @@ void *do_alloc(size_t size) {
  * @return A pointer to the requested block of memory
  */
 void *tumalloc(size_t size) {
-    void *tumalloc(size_t size) {
-        if (size == 0) return NULL;
+    if (size == 0) return NULL;
     
-        free_block *curr = HEAD;
-        free_block *prev = NULL;
+    free_block *curr = HEAD;
+    free_block *prev = NULL;
     
-        // Find a free block large enough
-        while (curr != NULL) {
-            if (curr->size >= size) {
-                remove_free_block(curr);
-                return (void*)(curr + 1); // Return pointer after header
-            }
-            prev = curr;
-            curr = curr->next;
+    // Find a free block large enough
+    while (curr != NULL) {
+        if (curr->size >= size) {
+            remove_free_block(curr);
+            return (void*)(curr + 1); // Return pointer after header
         }
-    
-        // No suitable block found, allocate more memory
-        free_block *new_block = do_alloc(size);
-        if (!new_block) return NULL;
-    
-        return (void*)(new_block + 1);
+        prev = curr;
+        curr = curr->next;
     }
     
+    // No suitable block found, allocate more memory
+    free_block *new_block = do_alloc(size);
+    if (!new_block) return NULL;
+    
+    return (void*)(new_block + 1);
 }
+    
 
 /**
  * Allocates and initializes a list of elements for the end user
