@@ -208,5 +208,12 @@ void *turealloc(void *ptr, size_t new_size) {
  * @param ptr Pointer to the allocated piece of memory
  */
 void tufree(void *ptr) {
+    if (!ptr) return;
+    // block header snag
+    free_block *block = (free_block *)ptr - 1; 
+    block->next = HEAD;
+    HEAD = block;
 
+    // coalesce neighboring free blocks
+    coalesce(block);
 }
