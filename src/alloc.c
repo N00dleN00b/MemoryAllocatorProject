@@ -157,6 +157,8 @@ void *do_alloc(size_t size) {
  * @return A pointer to the requested block of memory
  */
 void *tumalloc(size_t size) {
+    void *ptr = NULL;  // Declare ptr here
+
     // If HEAD is NULL, allocate a new block
     if (HEAD == NULL) {
         ptr = do_alloc(size);
@@ -173,7 +175,7 @@ void *tumalloc(size_t size) {
             // Set the magic number
             header->magic = 0x01234567;
             // Return the pointer to the allocated memory, after the header
-            return (void *)(header + 1);
+            return (void *)(header + 1);  // This points to memory after the header
         }
     }
 
@@ -241,14 +243,15 @@ void *turealloc(void *ptr, size_t new_size) {
  * @param ptr Pointer to the allocated piece of memory
  */
 void tufree(void *ptr) {
-    // Cast the pointer to the header
-    header *header = (header *)ptr - 1;
+    // Cast the pointer to the header (ensure it is a valid pointer)
+    if (ptr == NULL) return;  // Check for NULL pointer
+
+    header *header = (header *)ptr - 1;  // Adjust the pointer to the header
 
     // Check if the block is valid by the magic number
     if (header->magic == 0x01234567) {
-        // Cast the header to a free block for the free list
+        // Handle the free block logic
         free_block *free_block = (free_block *)header;
-        // Set the size and link back to the HEAD
         free_block->size = header->size;
         free_block->next = HEAD;
         HEAD = free_block;
