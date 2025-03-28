@@ -1,5 +1,4 @@
 #include "alloc.h"
-
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -149,6 +148,8 @@ void *do_alloc(size_t size) {
     return new_block;
 }
 
+//for extra cred: ptr to last allcated free blk
+static free_block *next_fit_ptr = NULL; 
 /**
  * Allocates memory for the end user
  *
@@ -157,36 +158,61 @@ void *do_alloc(size_t size) {
  */
 
 
-////return here for extra cred (if we feel like it)
-void *tumalloc(size_t size) {
-    // Align the size to desired fit
-    size = (size + sizeof(free_block) - 1) & ~(sizeof(free_block) - 1); // rounding up to nearest block size
 
-    free_block *current = HEAD;
+void *tumalloc(size_t size) {
+    // Track and test extra cred Next fit print statements
+    printf("Requesting allocation of size: %zu\n", size);
+    printf("Next Fit pointer before allocation: %p\n", next_fit_ptr);
+
+    // Align the size / rounding up to nearest block size
+    size = (size + ALIGNMENT - 1) & ~(ALIGNMENT - 1); 
+
+
+    // next, start from next_fit_ptr (or the HEAD)
+    free_block *current = next_fit_ptr ? next_fit_ptr : HEAD;  
     free_block *prev = NULL;
 
-    // Traverse the free list to find a block of suitable size
+    // Traverse free list to find suitable block size
     while (current) {
         if (current->size >= size) {
+            // If necessary, split block
+            if (current->size > size + sizeof(free_block)) {
+                split(current, size);
+            }
+
             // Remove the block from the free list
             if (prev) {
                 prev->next = current->next;
             } else {
                 HEAD = current->next;
             }
-            return (void *)(current + 1);  // Return the memory address after the block header
+
+            // Update the next_fit_ptr to the next free block
+            next_fit_ptr = current->next ? current->next : HEAD;  
+
+            printf("Allocated memory at: %p\n", (void *)(current + 1));
+            return (void *)(current + 1);  
         }
         prev = current;
         current = current->next;
     }
 
-    // If no suitable block, request new memory (assume a system call here for simplicity)
+    // If no suitable block, request new memory
     free_block *new_block = (free_block *)sbrk(size + sizeof(free_block));
     if (new_block == (void *)-1) {
-        return NULL;  // If sbrk fails, return NULL
+        // sbrk fails, print:
+        printf("Allocation failed: sbrk failed.\n");
+        return NULL; 
     }
+
     new_block->size = size;
-    return (void *)(new_block + 1);
+    new_block->next = NULL;
+
+    // Update next_fit_ptr after sbrk allocation
+    next_fit_ptr = NULL;  // Set to NULL; not needed atfer sbrk
+
+    printf("Allocated new memory at: %p\n", (void *)(new_block + 1));
+    return (void *)(new_block + 1);    
 }
     
 
@@ -240,6 +266,9 @@ void *turealloc(void *ptr, size_t new_size) {
  * @param ptr Pointer to the allocated piece of memory
  */
 void tufree(void *ptr) {
+    // extra cred next fit test case 
+    printf("Freeing block at: %p\n", ptr);
+
     if (!ptr) return;  // nah, do not free null ptr
 
     // Get the block header (before the memory block pointer)
@@ -248,5 +277,7 @@ void tufree(void *ptr) {
     // Add the block back to the free list
     block->next = HEAD;
     HEAD = block;
+
+    printf("Free operation completed. Update the free_list:\n");  
 }
 
