@@ -138,16 +138,15 @@ void *coalesce(free_block *block) {
  */
 
 void *do_alloc(size_t size) {
-    return NULL;
-     void *block = sbrk(size + sizeof(free_block));
-     if (block == (void*) -1) { // sbrk failed
-         return NULL;
-     }
- 
-     free_block *new_block = (free_block *) block;
-     new_block->size = size;
-     new_block->next = NULL;
-     return new_block;
+    void *block = sbrk(size + sizeof(free_block));
+    if (block == (void*) -1) { // sbrk failed
+        return NULL;
+    }
+
+    free_block *new_block = (free_block *) block;
+    new_block->size = size;
+    new_block->next = NULL;
+    return new_block;
 }
 
 /**
@@ -159,24 +158,31 @@ void *do_alloc(size_t size) {
 
 void *tumalloc(size_t size) {
     if (size == 0) return NULL;
-    
+    printf("[malloc] Requesting %zu bytes\n", size);  // Debug print
+
     free_block *curr = HEAD;
     free_block *prev = NULL;
-    
+
     // Find a free block large enough
     while (curr != NULL) {
+        printf("[malloc] Checking block at %p, size: %zu, next: %p\n", curr, curr->size, curr->next);  // Debug print
         if (curr->size >= size) {
-            remove_free_block(curr);
+            remove_free_block(curr);  // We will remove it from the free list
+            printf("[malloc] Found suitable block at %p, size: %zu\n", curr, curr->size);  // Debug print
             return (void*)(curr + 1); // Return pointer after header
         }
         prev = curr;
         curr = curr->next;
     }
-    
-    // No suitable block found, allocate more memory
+
+    // If no block is big enough, request new memory
     free_block *new_block = do_alloc(size);
-    if (!new_block) return NULL;
+    if (!new_block) {
+        printf("[malloc] Allocation failed, out of memory\n");  // Debug print
+        return NULL;
+    }
     
+    printf("[malloc] Allocated new block at %p, size: %zu\n", new_block, new_block->size);  // Debug print
     return (void*)(new_block + 1);
 }
     
@@ -214,23 +220,22 @@ void *turealloc(void *ptr, size_t new_size) {
         return NULL;
     }
 
-    free_block *block = (free_block *)ptr - 1; // Get the block header
-    if (!block) {
-        printf("Invalid block.\n");
-        return NULL;
-    }
+    free_block *block = (free_block *)ptr - 1;  // Get the block header
+    printf("[realloc] Reallocating block at %p, current size: %zu, new size: %zu\n", ptr, block->size, new_size);  // Debug print
 
     // Check if the new size is smaller or equal to the current size
     if (block->size >= new_size) {
+        printf("[realloc] New size is smaller or equal, returning original block at %p\n", ptr);  // Debug print
         return ptr;  // No need to reallocate
     }
 
     void *new_ptr = tumalloc(new_size);
     if (new_ptr) {
-        // Check that the old block size is not smaller than the new size before copying
         size_t copy_size = block->size < new_size ? block->size : new_size;
+        printf("[realloc] Copying %zu bytes from old block to new block\n", copy_size);  // Debug print
         memcpy(new_ptr, ptr, copy_size);  // Safely copy the memory
         tufree(ptr);  // Free the old block
+        printf("[realloc] Freed old block at %p\n", ptr);  // Debug print
     }
     return new_ptr;
 }
@@ -242,11 +247,18 @@ void *turealloc(void *ptr, size_t new_size) {
  */
 void tufree(void *ptr) {
     if (!ptr) return;
-     // block header snag
-     free_block *block = (free_block *)ptr - 1; 
-     block->next = HEAD;
-     HEAD = block;
- 
-     // coalesce neighboring free blocks
-     coalesce(block);
+    printf("[free] Freeing block at %p\n", ptr);  // Debug print
+
+    // Get the block header
+    free_block *block = (free_block *)ptr - 1;
+    block->next = HEAD;  // Insert into the free list
+    HEAD = block;
+
+    printf("[free] Block added to free list at %p, new head: %p\n", block, HEAD);  // Debug print
+
+    // Coalesce neighboring free blocks
+    coalesce(block);
+
+    printf("[free] Free operation complete\n");  // Debug print
 }
+
