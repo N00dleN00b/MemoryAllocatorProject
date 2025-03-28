@@ -1,7 +1,7 @@
 CMakeFiles/cyb3053_project2.dir/src/alloc.c.o: \
- /mnt/c/Users/numar/Downloads/OS\ Concepts/Project2/MemoryAllocatorProject/src/alloc.c \
+ /mnt/c/Users/numar/Downloads/OS\ Concepts/project2/MemoryAllocatorProject/src/alloc.c \
  /usr/include/stdc-predef.h \
- /mnt/c/Users/numar/Downloads/OS\ Concepts/Project2/MemoryAllocatorProject/src/alloc.h \
+ /mnt/c/Users/numar/Downloads/OS\ Concepts/project2/MemoryAllocatorProject/src/alloc.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h /usr/include/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \

@@ -4,8 +4,8 @@
 
 
 # Configuration directories and files
-SourceDirectory: /mnt/c/Users/numar/Downloads/OS Concepts/Project2/MemoryAllocatorProject
-BuildDirectory: /mnt/c/Users/numar/Downloads/OS Concepts/Project2/MemoryAllocatorProject/build
+SourceDirectory: /mnt/c/Users/numar/Downloads/OS Concepts/project2/MemoryAllocatorProject
+BuildDirectory: /mnt/c/Users/numar/Downloads/OS Concepts/project2/MemoryAllocatorProject/build
 
 # Where to place the cost data store
 CostDataFile: 
@@ -26,7 +26,7 @@ SubmitURL: http://
 NightlyStartTime: 00:00:00 EDT
 
 # Commands for the build/test/submit cycle
-ConfigureCommand: "/usr/bin/cmake" "/mnt/c/Users/numar/Downloads/OS Concepts/Project2/MemoryAllocatorProject"
+ConfigureCommand: "/usr/bin/cmake" "/mnt/c/Users/numar/Downloads/OS Concepts/project2/MemoryAllocatorProject"
 MakeCommand: /usr/bin/cmake --build . --config "${CTEST_CONFIGURATION_TYPE}"
 DefaultCTestConfigurationType: Release
 

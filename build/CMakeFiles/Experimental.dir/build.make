@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "/mnt/c/Users/numar/Downloads/OS Concepts/Project2/MemoryAllocatorProject"
+CMAKE_SOURCE_DIR = "/mnt/c/Users/numar/Downloads/OS Concepts/project2/MemoryAllocatorProject"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/mnt/c/Users/numar/Downloads/OS Concepts/Project2/MemoryAllocatorProject/build"
+CMAKE_BINARY_DIR = "/mnt/c/Users/numar/Downloads/OS Concepts/project2/MemoryAllocatorProject/build"
 
 # Utility rule file for Experimental.
 
@@ -82,6 +82,6 @@ CMakeFiles/Experimental.dir/clean:
 .PHONY : CMakeFiles/Experimental.dir/clean
 
 CMakeFiles/Experimental.dir/depend:
-	cd "/mnt/c/Users/numar/Downloads/OS Concepts/Project2/MemoryAllocatorProject/build" && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" "/mnt/c/Users/numar/Downloads/OS Concepts/Project2/MemoryAllocatorProject" "/mnt/c/Users/numar/Downloads/OS Concepts/Project2/MemoryAllocatorProject" "/mnt/c/Users/numar/Downloads/OS Concepts/Project2/MemoryAllocatorProject/build" "/mnt/c/Users/numar/Downloads/OS Concepts/Project2/MemoryAllocatorProject/build" "/mnt/c/Users/numar/Downloads/OS Concepts/Project2/MemoryAllocatorProject/build/CMakeFiles/Experimental.dir/DependInfo.cmake" --color=$(COLOR)
+	cd "/mnt/c/Users/numar/Downloads/OS Concepts/project2/MemoryAllocatorProject/build" && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" "/mnt/c/Users/numar/Downloads/OS Concepts/project2/MemoryAllocatorProject" "/mnt/c/Users/numar/Downloads/OS Concepts/project2/MemoryAllocatorProject" "/mnt/c/Users/numar/Downloads/OS Concepts/project2/MemoryAllocatorProject/build" "/mnt/c/Users/numar/Downloads/OS Concepts/project2/MemoryAllocatorProject/build" "/mnt/c/Users/numar/Downloads/OS Concepts/project2/MemoryAllocatorProject/build/CMakeFiles/Experimental.dir/DependInfo.cmake" --color=$(COLOR)
 .PHONY : CMakeFiles/Experimental.dir/depend
 

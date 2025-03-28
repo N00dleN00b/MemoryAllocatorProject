@@ -8,8 +8,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/mnt/c/Users/numar/Downloads/OS Concepts/Project2/MemoryAllocatorProject/src/alloc.c" "CMakeFiles/cyb3053_project2.dir/src/alloc.c.o" "gcc" "CMakeFiles/cyb3053_project2.dir/src/alloc.c.o.d"
-  "/mnt/c/Users/numar/Downloads/OS Concepts/Project2/MemoryAllocatorProject/src/main.c" "CMakeFiles/cyb3053_project2.dir/src/main.c.o" "gcc" "CMakeFiles/cyb3053_project2.dir/src/main.c.o.d"
+  "/mnt/c/Users/numar/Downloads/OS Concepts/project2/MemoryAllocatorProject/src/alloc.c" "CMakeFiles/cyb3053_project2.dir/src/alloc.c.o" "gcc" "CMakeFiles/cyb3053_project2.dir/src/alloc.c.o.d"
+  "/mnt/c/Users/numar/Downloads/OS Concepts/project2/MemoryAllocatorProject/src/main.c" "CMakeFiles/cyb3053_project2.dir/src/main.c.o" "gcc" "CMakeFiles/cyb3053_project2.dir/src/main.c.o.d"
   )
 
 # Targets to which this target links.

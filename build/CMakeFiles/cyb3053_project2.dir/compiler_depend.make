@@ -77,8 +77,9 @@ CMakeFiles/cyb3053_project2.dir/src/alloc.c.o: ../src/alloc.c \
   /usr/include/x86_64-linux-gnu/bits/string_fortified.h
 
 CMakeFiles/cyb3053_project2.dir/src/main.c.o: ../src/main.c \
+  /mnt/c/Users/numar/Downloads/OS\ Concepts/Project2/MemoryAllocatorProject/src/main.c \
   /usr/include/stdc-predef.h \
-  ../src/alloc.h \
+  /mnt/c/Users/numar/Downloads/OS\ Concepts/Project2/MemoryAllocatorProject/src/alloc.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h \
   /usr/include/stdio.h \
   /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
@@ -189,6 +190,8 @@ CMakeFiles/cyb3053_project2.dir/src/main.c.o: ../src/main.c \
 
 /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h:
 
+/mnt/c/Users/numar/Downloads/OS\ Concepts/Project2/MemoryAllocatorProject/src/alloc.h:
+
 /usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
 
 ../src/alloc.h:
@@ -200,6 +203,8 @@ CMakeFiles/cyb3053_project2.dir/src/main.c.o: ../src/main.c \
 /usr/include/features-time64.h:
 
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
+
+/mnt/c/Users/numar/Downloads/OS\ Concepts/Project2/MemoryAllocatorProject/src/main.c:
 
 /usr/include/x86_64-linux-gnu/bits/waitstatus.h:
 
